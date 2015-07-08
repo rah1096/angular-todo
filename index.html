@@ -1,0 +1,179 @@
+<html ng-app="todoApp">
+<head>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<link rel="stylesheet" href="style.css">
+
+</head>
+<body ng-cloak ng-controller="todoCtrl">
+<div class="container">
+
+	<div class="row">
+		<div class="col-lg-4">
+			<p>
+				<strong>Watch Count:</strong> {{ watchCount }}
+			</p>
+		</div>
+		<div class="col-lg-8">
+			<button type="button" class="btn btn-primary btn-w-sm pull-right"
+			        ng-click="todoModal(todoItem)">Add Todo
+			</button>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-lg-12">
+			<ul class="list-unstyled">
+				<table class="table table-hover">
+					<thead>
+					<tr>
+						<th>#</th>
+						<th>Title</th>
+						<th>Description</th>
+						<th>Created</th>
+						<th>Updated</th>
+						<th>Start Time</th>
+						<th>End Time</th>
+						<th class="col-lg-1"></th>
+						<th class="col-lg-1"></th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr ng-repeat="todoItem in todoItems">
+						<th scope="row">{{ $index+1 }}</th>
+						<td>{{ todoItem.title || 'n/a'  }}</td>
+						<td>{{ todoItem.description || 'n/a'  }}</td>
+						<td ng-bind="convertDateTime(todoItem.createdAt)"></td>
+						<td ng-bind="convertDateTime(todoItem.updatedAt)"></td>
+						<td ng-bind="convertDateTime(todoItem.startTime.iso)"></td>
+						<td ng-bind="convertDateTime(todoItem.endTime.iso)"></td>
+						<td class="col-lg-1">
+
+							<button type="button" class="btn btn-primary btn-w-sm"
+							        ng-click="editTodoModal(todoItem)">
+								Edit
+							</button>
+
+
+						</td>
+						<td class="col-lg-1">
+
+							<button type="button" class="btn btn-primary btn-w-sm"
+							        ng-click="deleteTodoItem(todoItem)">Delete
+							</button>
+
+
+						</td>
+					</tr>
+					</tbody>
+				</table>
+
+			</ul>
+
+		</div>
+	</div>
+</div>
+
+
+<script type="text/ng-template" id="todoModal.html">
+	<div class="modal-header bg-primary">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+		        ng-click="cancelModal()">&times;</button>
+
+		<h4 ng-show="addTodoButton" class="modal-title" id="myModalLabel">Add Todo Item</h4>
+		<h4 ng-show="saveTodoButton" class="modal-title" id="myModalLabel">Edit Todo Item</h4>
+
+	</div>
+	<div class="modal-body">
+
+
+		<div class="form-group">
+			<div class="row">
+				<div class="col-lg-12">
+
+					<alert ng-repeat="alert in alerts" type="{{ alert.type }}"
+					       close="closeAlert($index)">{{ alert.msg }}</alert>
+
+
+				</div>
+
+			</div>
+		</div>
+
+
+		<div class="form-group">
+			<div class="row">
+				<div class="col-lg-12">
+
+					<label for="title">Title</label>
+					<input type="text" ng-model="todoItem.title" name="title"
+					       class="form-control "
+					       placeholder="Title">
+					<input type="hidden" ng-model="todoItem.objectId" name="objectId"
+					       class="form-control ">
+
+				</div>
+
+			</div>
+		</div>
+
+		<div class="form-group">
+			<div class="row">
+				<div class="col-lg-12">
+
+					<label for="description">Description</label>
+					<textarea ng-model="todoItem.description" name="description" class="form-control"
+					          rows="2"></textarea>
+
+
+				</div>
+			</div>
+		</div>
+
+		<div class="form-group calender col-lg-6">
+			<label for="startTime">Start Time</label>
+
+			<timepicker class="timepicker" ng-model="todoItem.startTimeHourMin"
+			            hour-step="hstep" ng-change="timeChanged()"
+			            minute-step="mstep" show-meridian="isAmPM"
+					></timepicker>
+		</div>
+		<div class="form-group col-lg-6 calender">
+			<label for="endTime">End Time</label>
+
+			<timepicker class="timepicker" ng-model="todoItem.endTimeHourMin"
+			            hour-step="hstep" ng-change="timeChanged()"
+			            minute-step="mstep" show-meridian="isAmPM"
+					></timepicker>
+		</div>
+
+		<span class="clearfix"></span>
+
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="cancelModal()">Close</button>
+		<button ng-show="addTodoButton" type="button" class="btn btn-primary" ng-click="saveTodoItem()">Save
+		</button>
+		<button ng-show="saveTodoButton" type="button" class="btn btn-primary" ng-click="updateTodoItem()">
+			Update
+		</button>
+	</div>
+</script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.2/angular.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.2/angular-sanitize.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.0/ui-bootstrap-tpls.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+
+
+<!-- Todo APP -->
+<script src="app.js"></script>
+<script src="other.js"></script>
+<script src="controllers.js"></script>
+<script src="factory.js"></script>
+
+</body>
+
+</html>
